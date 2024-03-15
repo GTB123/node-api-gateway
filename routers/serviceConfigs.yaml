@@ -1,0 +1,21 @@
+services:
+  - name: uuidService
+    type: grpc
+    target: '127.0.0.1:9001'
+    protoPath: '../proto/uuid.proto'
+    authRequired: false
+    methods:
+      - name: GenerateUUID
+        request:
+          prefix: string
+      - name: Watch
+        request:
+          prefix: string
+  - name: anotherService
+    type: rest
+    target: 'https://api.example.com'
+    authRequired: true
+    auth:
+      type: apiKey
+      key: 'X-API-KEY'
+      value: 'your_api_key_here'

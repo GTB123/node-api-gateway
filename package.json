@@ -1,0 +1,19 @@
+{
+  "name": "api-two",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@grpc/grpc-js": "^1.10.2",
+    "@grpc/proto-loader": "^0.7.10",
+    "axios": "^1.6.7",
+    "body-parser": "^1.20.2",
+    "express": "^4.18.3",
+    "js-yaml": "^4.1.0"
+  }
+}
