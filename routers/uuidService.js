@@ -1,5 +1,6 @@
 var express = require('express');
 var router = express.Router();
+var logger = require('../logger');
 
 const grpc = require('@grpc/grpc-js');
 const protoLoader = require('@grpc/proto-loader');
@@ -7,11 +8,10 @@ const path = require('path');
 const fs = require('fs');
 const yaml = require('js-yaml');
 
+//load config
 const config = yaml.load(fs.readFileSync(path.join(__dirname, 'serviceConfigs.yaml')));
-
-// Find the UUID service configuration
 const uuidServiceConfig = config.services.find(service => service.name === 'uuidService');
-
+//set up grpc client
 const BASE_URL = uuidServiceConfig.target;
 const PROTO_PATH = path.resolve(__dirname, uuidServiceConfig.protoPath);
 const packageDefinition = protoLoader.loadSync(PROTO_PATH, {
@@ -23,25 +23,66 @@ const packageDefinition = protoLoader.loadSync(PROTO_PATH, {
 });
 
 const uuidProto = grpc.loadPackageDefinition(packageDefinition);
-
 const client = new uuidProto.store.UUID(
   BASE_URL,
   grpc.credentials.createInsecure()
 );
 
-const call = client.Watch({ prefix: 'car' }, { prefix: 'company' });
+/**
+ * @swagger
+ * components:
+ *   schemas:
+ *     GenerateUUIDRequest:
+ *       type: object
+ *       properties:
+ *         prefix:
+ *           type: string
+ *     GenerateUUIDResponse:
+ *       type: object
+ *       properties:
+ *         uuid:
+ *           type: string
+ *           example: com_qztdLjupDpDiuTBbKPpvO4
+ *     Error:
+ *       type: object
+ *       properties:
+ *         error:
+ *           type: string
+ *           example: Error generating UUID
+ *         prefix:
+ *           type: string
+ * /uuid:
+ *   post:
+ *     summary: Generate a UUID
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/GenerateUUIDRequest'
+ *     responses:
+ *       200:
+ *         description: A UUID
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/GenerateUUIDResponse'
+ *       500:
+ *         description: Error generating UUID
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ */
 
-call.on('data', function (response) {
-  // Handle each piece of data received from the stream
-  console.log(response);
-});
-
+// Routes
 router.post('/uuid', (req, res) => {
   const { prefix } = req.body;
   client.GenerateUUID({ prefix: prefix }, (err, response) => {
     if (!err) {
       res.send(response);
     } else {
+      logger.error('Error generating UUID', { error: err.message, prefix });
       res.status(500).send(err.message);
     }
   });

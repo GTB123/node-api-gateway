@@ -1,7 +1,7 @@
 var express = require('express');
 var router = express.Router();
 
-router.post('/discover', (req, res) => {
+router.get('/discover', (req, res) => {
     const fs = require('fs');
     const path = require('path');
     const yaml = require('js-yaml');
