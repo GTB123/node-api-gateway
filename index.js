@@ -32,11 +32,12 @@ app.use((req, res, next) => {
 
   res.send = (body) => {
     if (!responseLogged) {
-      logger.info('RESPONSE',{
+      const logLevel = res.statusCode >= 400 ? 'error' : 'info';
+      logger[logLevel]('RESPONSE',{
         method: req.method,
         path: req.path,
         requestId,
-        statusCode: res.statusCode,
+        status: res.statusCode,
         body: body,
         timestamp: new Date().toISOString()
       });

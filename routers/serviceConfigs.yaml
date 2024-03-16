@@ -15,11 +15,18 @@ services:
       - name: Watch
         request:
           prefix: string
-  - name: anotherService
+  - name: workoutService
     type: rest
-    target: 'https://api.example.com'
-    authRequired: true
-    auth:
-      type: apiKey
-      key: 'X-API-KEY'
-      value: 'your_api_key_here'
+    target: '127.0.0.1:3008'
+    authRequired: false
+    methods:
+      - name: POST
+        path: /workout
+        request:
+          userId: string
+        validation:
+          userId: 
+            type: string
+            required: true
+      - name: GET
+        path: /workouts/{userId}
