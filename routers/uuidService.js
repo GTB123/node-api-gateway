@@ -1,6 +1,8 @@
 var express = require('express');
 var router = express.Router();
 var logger = require('../logger');
+var {  validationResult } = require('express-validator');
+const { generateValidationRules } = require('./validationRules');
 
 const grpc = require('@grpc/grpc-js');
 const protoLoader = require('@grpc/proto-loader');
@@ -75,8 +77,16 @@ const client = new uuidProto.store.UUID(
  *               $ref: '#/components/schemas/Error'
  */
 
+
+var uuidValidationRules = generateValidationRules('uuidService', 'GenerateUUID');
+
 // Routes
-router.post('/uuid', (req, res) => {
+router.post('/uuid', uuidValidationRules,(req, res) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(400).send(errors.array()[0]);
+  }
+
   const { prefix } = req.body;
   client.GenerateUUID({ prefix: prefix }, (err, response) => {
     if (!err) {
