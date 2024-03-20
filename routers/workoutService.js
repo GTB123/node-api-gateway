@@ -33,15 +33,11 @@ router.post('/workouts', workoutValidationRules, async (req, res) => {
   const targetUrl = `http://${workoutServiceConfig.target}/workout`; // Adjust the URL as needed
 
   try {
-    // Replace this axios.post call with the actual call to your microservice
-    // Make sure to send the necessary data in the request
     const microserviceResponse = await axios.post(targetUrl, req.body);
 
-    // Assuming the microservice returns the workout ID in the response
-    // and that the response structure is { id: workout.id }
     const workoutId = microserviceResponse.data.id;
 
-    // Send back the workout ID to the client
+    
     res.status(201).send({ id: workoutId });
   } catch (error) {
     console.error(error); // Enhanced error logging
