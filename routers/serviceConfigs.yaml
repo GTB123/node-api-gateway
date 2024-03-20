@@ -1,32 +1,37 @@
 services:
-  - name: uuidService
-    type: grpc
-    target: '127.0.0.1:9001'
-    protoPath: '../proto/uuid.proto'
-    authRequired: false
-    methods:
-      - name: GenerateUUID
-        request:
-          prefix: string
-        validation:
-          prefix: 
-            type: string
-            required: true
-      - name: Watch
-        request:
-          prefix: string
   - name: workoutService
     type: rest
     target: '127.0.0.1:3008'
     authRequired: false
-    methods:
-      - name: POST
-        path: /workout
-        request:
-          userId: string
-        validation:
-          userId: 
-            type: string
-            required: true
-      - name: GET
-        path: /workouts/{userId}
+    routes:
+      - path: /workouts
+        description: Create a new workout
+        methods:
+          - name: POST
+            request:
+              userId: string
+            validation:
+              userId: 
+                type: string
+                required: true
+      - path: /workouts/:userId/workout/:workoutId
+        description: Get a user workout by id
+        methods:
+          - name: GET
+      - path: /workouts/:userId
+        methods:
+          - name: GET
+      - path: /exercise/:exerciseId/history
+        description: Get exercise history excluding the current workout
+        methods:
+          - name: GET
+            request:
+              userId: string
+              workoutId: string
+            validation:
+              userId: 
+                type: string
+                required: true
+              workoutId:
+                type: string
+                required: true

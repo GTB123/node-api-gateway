@@ -11,7 +11,7 @@ router.get('/discover', (req, res) => {
     const config = yaml.load(fs.readFileSync(configPath, 'utf8'));
 
     // Filter out sensitive information like API keys
-    const services = config.services.map(({ name, type, target, methods}) => ({ name, type, target, methods }));
+    const services = config.services;
 
     res.json(services);
 });

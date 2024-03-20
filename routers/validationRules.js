@@ -6,17 +6,20 @@ const yaml = require('js-yaml');
 const configPath = path.join(__dirname, 'serviceConfigs.yaml');
 const config = yaml.load(fs.readFileSync(configPath, 'utf8'));
 
-const generateValidationRules = (serviceName, methodName) => {
-  const service = config.services.find(s => s.name === serviceName);
-  const method = service.methods.find(m => m.name === methodName);
+const generateValidationRules = (serviceName, routePath, methodName) => {
+  const service = config.services.find((s) => s.name === serviceName);
+
+  const route = service.routes.find((r) => r.path === routePath);
+  const method = route.methods.find((m) => m.name === methodName);
   const rules = [];
 
-  if (method.validation) {
-    Object.keys(method.validation).forEach(field => {
-      const { type, required } = method.validation[field];
+  if (method.request) {
+    Object.keys(method.request).forEach((field) => {
+      const type = method.request[field];
       let rule = body(field);
-      if (type === 'string') rule = rule.isString().withMessage(`${field} must be a string`);
-      if (required) rule = rule.notEmpty().withMessage(`${field} is required`);
+      if (type === 'string')
+        rule = rule.isString().withMessage(`${field} must be a string`);
+      rule = rule.notEmpty().withMessage(`${field} is required`);
       rules.push(rule);
     });
   }
