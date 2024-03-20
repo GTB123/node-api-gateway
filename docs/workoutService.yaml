@@ -21,7 +21,6 @@ components:
         workoutId:
           type: string
 
-
 paths:
   /workouts:
     post:
