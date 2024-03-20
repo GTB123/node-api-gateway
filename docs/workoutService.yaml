@@ -1,0 +1,125 @@
+openapi: 3.0.0
+info:
+  title: Workout Service API
+  version: 1.0.0
+  description: API for managing workouts
+
+components:
+  schemas:
+    createWorkoutRequestSchema:
+      type: object
+      required:
+        - userId
+      properties:
+        userId:
+          type: string
+    createWorkoutResponseSchema:
+      type: object
+      required:
+        - workoutId
+      properties:
+        workoutId:
+          type: string
+
+
+paths:
+  /workouts:
+    post:
+      tags:
+        - Workout Service API
+      summary: Create a workout
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/createWorkoutRequestSchema'
+      responses:
+        201:
+          description: Workout created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/createWorkoutResponseSchema'
+        400:
+          description: Bad request
+          
+        500:
+          description: Error creating workout
+          
+  /workouts/{userId}:
+    get:
+      tags:
+        - Workout Service API
+      summary: Get workouts for a user
+      parameters:
+        - in: path
+          name: userId
+          required: true
+          schema:
+            type: string
+            description: The user ID
+      responses:
+        200:
+          description: A list of workouts
+        500:
+          description: Error getting workouts
+
+  /workouts/{userId}/workout/{workoutId}:
+    get:
+      tags:
+        - Workout Service API
+      summary: Get a specific workout for a user by workout ID
+      parameters:
+        - in: path
+          name: userId
+          required: true
+          schema:
+            type: string
+            description: The user ID
+        - in: path
+          name: workoutId
+          required: true
+          schema:
+            type: string
+            description: The workout ID
+      responses:
+        200:
+          description: Specific workout details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Workout'
+        500:
+          description: Error getting the workout
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /exercise/{exerciseId}/history:
+    get:
+      tags:
+        - Workout Service API
+      summary: Get exercise history excluding the current workout
+      parameters:
+        - in: path
+          name: exerciseId
+          required: true
+          schema:
+            type: string
+            description: The exercise ID
+      responses:
+        200:
+          description: Exercise history
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Workout'
+        500:
+          description: Error getting exercise history
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'

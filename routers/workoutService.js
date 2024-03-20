@@ -17,9 +17,6 @@ const workoutServiceConfig = config.services.find(
   (service) => service.name === 'workoutService'
 );
 
-// Define validation rules
-
-//write the swagger docs
 
 /**
  * @swagger

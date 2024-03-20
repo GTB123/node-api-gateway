@@ -5,7 +5,6 @@ services:
     authRequired: false
     routes:
       - path: /workouts
-        description: Create a new workout
         methods:
           - name: POST
             request:
@@ -22,7 +21,6 @@ services:
         methods:
           - name: GET
       - path: /exercise/:exerciseId/history
-        description: Get exercise history excluding the current workout
         methods:
           - name: GET
             request:
